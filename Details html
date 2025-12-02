@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fill Details - Trustees Ventures</title>
+<style>
+body { font-family: Arial; background: #f5f7fa; margin:0; }
+form { max-width: 400px; margin: 50px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow:0 0 10px rgba(0,0,0,0.1);}
+input, button { width:100%; padding:10px; margin:8px 0; border-radius:4px; }
+button { background:#0b2c4d; color:white; border:none; cursor:pointer;}
+button:hover { background:#143e63; }
+</style>
+</head>
+<body>
+
+<form id="detailsForm">
+  <h2>Fill Your Details</h2>
+  <input type="text" id="fullName" placeholder="Full Name" required>
+  <input type="text" id="phone" placeholder="Phone Number" required>
+  <input type="text" id="idNumber" placeholder="ID Number" required>
+  <input type="text" id="address" placeholder="Address" required>
+  <button type="submit">Submit Details</button>
+</form>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { firebaseConfig } from "./firebase.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) window.location.href = "index.html";
+  else currentUser = user;
+});
+
+document.getElementById("detailsForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fullName = document.getElementById("fullName").value;
+  const phone = document.getElementById("phone").value;
+  const idNumber = document.getElementById("idNumber").value;
+  const address = document.getElementById("address").value;
+
+  await setDoc(doc(db, "users", currentUser.uid), { fullName, phone, idNumber, address, email: currentUser.email });
+
+  alert("Details submitted successfully!");
+  window.location.href = "dashboard.html";
+});
+</script>
+
+</body>
+</html>

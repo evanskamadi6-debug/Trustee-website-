@@ -1,0 +1,15 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
+
+export const firebaseConfig = {
+  apiKey: "AIzaSyCYGXxX9_qGUOFSPVb_Y8eu8B3GIHOD_Wo",
+  authDomain: "trustees-login.firebaseapp.com",
+  projectId: "trustees-login",
+  storageBucket: "trustees-login.firebasestorage.app",
+  messagingSenderId: "699230554834",
+  appId: "1:699230554834:web:7e9b9e9b4c06f63a29fb0b",
+  measurementId: "G-Z7G0G6T84Q"
+};
+
+const app = initializeApp(firebaseConfig);
+export const analytics = getAnalytics(app);

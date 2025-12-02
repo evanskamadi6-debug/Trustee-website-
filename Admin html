@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel - Trustees Ventures</title>
+<style>
+body { font-family: Arial; background:#f5f7fa; margin:0; }
+header { background:#0b2c4d; color:white; text-align:center; padding:20px; }
+table { width:90%; margin:20px auto; border-collapse:collapse; background:white; }
+th, td { padding:12px; border:1px solid #ccc; text-align:left; }
+th { background:#0b2c4d; color:white; }
+button { margin:20px; padding:10px 20px; background:#0b2c4d; color:white; border:none; cursor:pointer; border-radius:5px;}
+button:hover { background:#143e63; }
+.warning { text-align:center; margin-top:40px; font-size:20px; color:red; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Admin Panel</h1>
+</header>
+
+<div id="warning" class="warning"></div>
+
+<table id="usersTable" style="display:none;">
+<thead>
+<tr><th>Full Name</th><th>Phone</th><th>ID Number</th><th>Address</th><th>Email</th></tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<button id="logoutBtn">Logout</button>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { firebaseConfig } from "./firebase.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const ADMIN_EMAIL = "Evanskamadi6@gmail.com";
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) window.location.href = "index.html";
+  else if (user.email !== ADMIN_EMAIL) document.getElementById("warning").innerText = "Access Denied!";
+  else loadUserData();
+});
+
+async function loadUserData() {
+  const table = document.getElementById("usersTable");
+  const body = document.getElementById("tableBody");
+  table.style.display = "table";
+  const snapshot = await getDocs(collection(db, "users"));
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    body.innerHTML += `<tr><td>${data.fullName}</td><td>${data.phone}</td><td>${data.idNumber}</td><td>${data.address}</td><td>${data.email}</td></tr>`;
+  });
+}
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  signOut(auth);
+  window.location.href = "index.html";
+});
+</script>
+
+</body>
+</html>
